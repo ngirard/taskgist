@@ -69,6 +69,11 @@ The easiest way to install `taskgist` is using the pre-compiled wheel file from 
 3. **Configure API Key:**
     Proceed to the [Configuration](#configuration) section to set up your `GEMINI_API_KEY`.
 
+Alternatively, you can install it from within another project via
+```sh
+uv pip install git+https://github.com/ngirard/taskgist
+```
+
 ### For developers
 
 If you want to contribute to `taskgist` or modify the source code:

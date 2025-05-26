@@ -16,4 +16,4 @@ curl https://zyedidia.github.io/eget.sh | sh && { f=eget; sudo install $f "${PRE
 #   Config: no
 sudo eget -a x86_64 -a musl casey/just --to="${PREFIX}/bin"
 
-(cd "${PROJNAME}" && just sync && just baml-generate || exit 1)
+(just sync && just baml-generate || exit 1)

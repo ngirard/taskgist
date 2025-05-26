@@ -130,7 +130,7 @@ taskgist "Create a new user authentication system with email verification and pa
 ```
 Example output:
 ```
-create-user-authentication-email-verification
+create-user-authentication-email-verification-password-reset
 ```
 
 **Using a file input:**

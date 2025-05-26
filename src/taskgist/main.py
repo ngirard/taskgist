@@ -65,10 +65,10 @@ async def run_extraction(task_description: str) -> KeywordPhrase | None:
         print("Error: Task description is empty.")
         return None
 
-    if not os.getenv("OPENAI_API_KEY"):
-        print("Error: OPENAI_API_KEY environment variable not set.")
+    if not os.getenv("GEMINI_API_KEY"):
+        print("Error: GEMINI_API_KEY environment variable not set.")
         print(
-            'Please set it in your environment or in a .env file (e.g., OPENAI_API_KEY="sk-...").'
+            'Please set it in your environment or in a .env file (e.g., GEMINI_API_KEY="sk-...").'
         )
         return None
 

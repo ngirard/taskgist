@@ -1,5 +1,4 @@
 import subprocess
-import sys
 import unittest
 
 import taskgist
@@ -8,7 +7,7 @@ import taskgist
 class TestVersionCLI(unittest.TestCase):
     def test_cli_version(self):
         result = subprocess.run(
-            [sys.executable, "-m", "taskgist.main", "--version"],
+            ["taskgist", "--version"],
             capture_output=True,
             text=True,
         )

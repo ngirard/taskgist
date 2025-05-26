@@ -135,13 +135,14 @@ def create_gist(keyword_phrase_obj: KeywordPhrase) -> str:
 def main_cli():
     """Command-line interface for taskgist."""
     parser = argparse.ArgumentParser(
+        prog="taskgist",
         description="Generates a concise gist from a software engineering task description using BAML.",
         formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument(
         "--version",
-        action="store_true",
-        help="Show program's version number and exit",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
     parser.add_argument(
         "task",

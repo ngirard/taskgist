@@ -7,12 +7,12 @@ function ExtractKeywords(taskDescription: string) -> KeywordPhrase {
   client FlashLite
   prompt #"
     Extract a concise keyword phrase from the given software engineering task description.
-    The phrase must:
-    - Start with an action verb
-    - Consist of only only essential keywords
+    Guidelines:
+    - Return at most five keywords.
+    - The first keyword must be a single-word action verb summarizing the task.
+    - Each keyword must be a single word with no spaces.
     - Omit articles (the, a, an), common prepositions (in, on, to, for), and pronouns (it, this, that, etc.).
-    - Be representative of the core task.
-    - Not exceed 5 words
+    - Keep only essential terms representing the core task.
 
     {{ ctx.output_format }}
 

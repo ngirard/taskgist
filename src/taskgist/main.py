@@ -93,12 +93,12 @@ async def run_extraction(task_description: str) -> KeywordPhrase | None:
 
 def create_gist(keyword_phrase_obj: KeywordPhrase) -> str:
     """Creates a hyphenated gist from the KeywordPhrase object."""
-    action_verb = keyword_phrase_obj.actionVerb.lower()
-    phrase_elements = [elem.lower() for elem in keyword_phrase_obj.phrase]
+    action_verb = keyword_phrase_obj.actionVerb.strip().lower()
+    phrase_elements = [elem.strip().lower() for elem in keyword_phrase_obj.phrase]
 
     final_gist_parts = []
     if action_verb:  # Only add if action_verb is not empty
-        final_gist_parts.append(action_verb)
+        final_gist_parts.extend(action_verb.split())
 
     if phrase_elements:
         # Verification: if the first phrase element is the same as action_verb,
@@ -109,7 +109,8 @@ def create_gist(keyword_phrase_obj: KeywordPhrase) -> str:
         else:
             relevant_phrase_elements = phrase_elements
 
-        final_gist_parts.extend(relevant_phrase_elements)
+        for elem in relevant_phrase_elements:
+            final_gist_parts.extend(elem.split())
 
     # Remove duplicates while preserving order and filter out empty strings
     seen = set()

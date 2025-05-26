@@ -119,6 +119,11 @@ Taskgist requires a Google AI API key to interact with the Gemini LLM.
 
 Once installed and configured, you can use the `taskgist` CLI. Ensure your virtual environment is activated if you're not using `just run` or `uv run`.
 
+**Check the installed version:**
+```bash
+taskgist --version
+```
+
 **Basic usage with a string input:**
 ```bash
 taskgist "Create a new user authentication system with email verification and password reset capabilities"

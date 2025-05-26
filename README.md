@@ -19,7 +19,7 @@ The tool processes natural language task descriptions, extracts key actions and 
 ## Features
 
 * **LLM-powered summarization**: Leverages Google's Gemini models via BAML for nuanced keyword extraction.
-* **Concise output**: Generates short, hyphenated phrases focusing on action verbs and essential terms.
+* **Concise output**: Generates short, hyphenated phrases focusing on action verbs and essential single-word terms.
 * **Flexible input**: Accepts task descriptions directly as a command-line argument or from a text file.
 * **BAML integration**: Utilizes BAML for defining LLM interactions, data structures, and tests.
 * **Modern Python tooling**: Uses `uv` for fast dependency management and `just` for task running.
@@ -29,7 +29,7 @@ The tool processes natural language task descriptions, extracts key actions and 
 
 1. You provide a task description (e.g., "Implement user login with two-factor authentication").
 2. Taskgist uses a BAML function (`ExtractKeywords` defined in `src/taskgist/baml_src/keywords.baml`) to send this description to the configured LLM (currently Google Gemini FlashLite, as defined in `src/taskgist/baml_src/clients.baml`).
-3. The BAML function instructs the LLM to extract an action verb and a concise keyword phrase, omitting common articles, prepositions, and pronouns.
+3. The BAML function instructs the LLM to extract an action verb and a concise keyword phrase, omitting common articles, prepositions, and pronouns. Each keyword is returned as a single word.
 4. The LLM returns a structured `KeywordPhrase` object (defined in BAML).
 5. Taskgist processes this object to create a hyphenated string (e.g., `implement-user-login-two-factor-authentication`).
 6. The tool is designed to output *only* the final generated gist to standard output, making it suitable for piping to other commands. All diagnostic messages, logs, or errors are directed to standard error.

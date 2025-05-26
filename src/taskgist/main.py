@@ -91,10 +91,20 @@ async def run_extraction(task_description: str) -> KeywordPhrase | None:
         return None
 
 
+def _normalize_spaces(text: str) -> str:
+    """Replace uncommon whitespace characters with regular spaces."""
+    for ch in ("\u00A0", "\u200B", "\u200C", "\u200D", "\uFEFF"):
+        text = text.replace(ch, " ")
+    return text
+
+
 def create_gist(keyword_phrase_obj: KeywordPhrase) -> str:
     """Creates a hyphenated gist from the KeywordPhrase object."""
-    action_verb = keyword_phrase_obj.actionVerb.strip().lower()
-    phrase_elements = [elem.strip().lower() for elem in keyword_phrase_obj.phrase]
+    action_verb = _normalize_spaces(keyword_phrase_obj.actionVerb).strip().lower()
+    phrase_elements = [
+        _normalize_spaces(elem).strip().lower()
+        for elem in keyword_phrase_obj.phrase
+    ]
 
     final_gist_parts = []
     if action_verb:  # Only add if action_verb is not empty

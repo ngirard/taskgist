@@ -36,14 +36,42 @@ The tool processes natural language task descriptions, extracts key actions and 
 
 ## Prerequisites
 
-* Python 3.12 or higher.
+### For users
+
+* **Python 3.12 or higher.**
+* **A Google AI API key for Gemini models.** You will need to set the `GEMINI_API_KEY` environment variable (see [Configuration](#configuration) below).
+* **pip** (or **uv pip**) for installing the package.
+
+### For developers (in addition to user prerequisites)
+
 * [uv](https://github.com/astral-sh/uv): For project and environment management. Follow the installation instructions on their site.
 * [just](https://github.com/casey/just): A command runner.
-* A Google AI API key for Gemini models. You will need to set the `GEMINI_API_KEY` environment variable.
 
-## Installation (for development)
+## Installation
 
-As this project is primarily set up for development:
+### For users (Recommended)
+
+The easiest way to install `taskgist` is using the pre-compiled wheel file from the latest GitHub release:
+
+1. **Download the `.whl` file:**
+    Go to the [latest release page](https://github.com/ngirard/taskgist/releases/latest).
+    Download the `.whl` file (e.g., `taskgist-X.Y.Z-py3-none-any.whl`) from the "Assets" section.
+
+2. **Install using pip:**
+    Open your terminal and navigate to the directory where you downloaded the file. Then, install it using `pip` (or `uv pip` if you have `uv` installed and prefer to use it):
+    ```bash
+    pip install taskgist-X.Y.Z-py3-none-any.whl
+    ```
+    (Replace `taskgist-X.Y.Z-py3-none-any.whl` with the actual filename you downloaded).
+
+    This will install `taskgist` and its dependencies into your Python environment.
+
+3. **Configure API Key:**
+    Proceed to the [Configuration](#configuration) section to set up your `GEMINI_API_KEY`.
+
+### For developers
+
+If you want to contribute to `taskgist` or modify the source code:
 
 1. **Clone the repository:**
     ```bash

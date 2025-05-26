@@ -10,7 +10,8 @@ wheels/
 .venv
 
 # Local stuff
-/src/taskgist/baml_client
+#/src/taskgist/baml_client
 /knowledge-base
 /task.md
 .*_repo_snapshot.md
+*.code-workspace

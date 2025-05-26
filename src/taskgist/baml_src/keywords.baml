@@ -1,6 +1,6 @@
 class KeywordPhrase {
   actionVerb string @description("The leading verb that describes the main action")
-  phrase string[] @description("Complete keyword phrase with essential terms only")
+  phrase string[] @description("Rest of the keyword phrase with essential terms only")
 }
 
 function ExtractKeywords(taskDescription: string) -> KeywordPhrase {
@@ -8,9 +8,9 @@ function ExtractKeywords(taskDescription: string) -> KeywordPhrase {
   prompt #"
     Extract a concise keyword phrase from the given software engineering task description.
     Guidelines:
-    - Return at most five keywords.
+    - Return at most 5 keywords.
     - The first keyword must be a single-word action verb summarizing the task.
-    - Each keyword must be a single word with no spaces.
+    - Each keyword MUST be a single word with NO SPACES.
     - Omit articles (the, a, an), common prepositions (in, on, to, for), and pronouns (it, this, that, etc.).
     - Keep only essential terms representing the core task.
 

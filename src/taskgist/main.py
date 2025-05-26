@@ -135,17 +135,18 @@ def create_gist(keyword_phrase_obj: KeywordPhrase) -> str:
 def main_cli():
     """Command-line interface for taskgist."""
     parser = argparse.ArgumentParser(
+        prog="taskgist",
         description="Generates a concise gist from a software engineering task description using BAML.",
         formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument(
-        "-v",
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
     )
     parser.add_argument(
         "task",
+        nargs="?",
         type=str,
         help="The task description string, or a file path prefixed with '@:' (e.g., '@:path/to/task.txt').\n"
         'Example: taskgist "Create a new user authentication system"\n'
@@ -153,6 +154,13 @@ def main_cli():
     )
 
     args = parser.parse_args()
+
+    if args.version:
+        print(f"{parser.prog} {__version__}")
+        return
+
+    if args.task is None:
+        parser.error("the following arguments are required: task")
 
     try:
         task_description_content = get_task_description(args.task)

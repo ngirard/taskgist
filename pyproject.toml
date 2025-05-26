@@ -35,3 +35,8 @@ build-backend = "hatchling.build"
 
 [tool.hatch.version]
 path = "src/taskgist/__init__.py"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.11",
+]

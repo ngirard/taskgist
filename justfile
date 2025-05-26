@@ -115,7 +115,8 @@ _pre_flight_checks:
 _common_release new_version dry_run='false':
     #!/usr/bin/env -S bash -euo pipefail
     set -e # Exit on any error
-    
+    new_version="{{new_version}}"
+    dry_run="{{dry_run}}"
     CURRENT_VERSION_FROM_FILE=$(python scripts/bump_version.py current) # Get actual current from file before any changes
     echo "Current version in file: $CURRENT_VERSION_FROM_FILE"
     echo "Target version for this release: $new_version"

@@ -30,6 +30,20 @@ class TestCreateGist(unittest.TestCase):
         )
         self.assertEqual(create_gist(kp), "create-user-authentication")
 
+    def test_zero_width_spaces(self):
+        kp = KeywordPhrase(
+            actionVerb="Create",
+            phrase=[
+                "user\u200bauthentication",
+                "email\u200cverification",
+                "password\u200dreset",
+            ],
+        )
+        self.assertEqual(
+            create_gist(kp),
+            "create-user-authentication-email-verification-password-reset",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

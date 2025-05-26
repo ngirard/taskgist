@@ -81,7 +81,7 @@ snapshot:
     # For this example, assuming dir2prompt is a custom tool.
     # If not, you might use: tree -L 2 -a -I '.git|.venv|__pycache__|.ruff_cache|dist|*.egg-info' > "${snapshot_filename}"
     # Or a more complex script to mimic dir2prompt.
-    # For now, let's use a placeholder if dir2prompt is not found.
+    # For now, lets use a placeholder if dir2prompt is not found.
     if command -v dir2prompt &> /dev/null; then
         dir2prompt > "${snapshot_filename}"
     else
@@ -168,6 +168,7 @@ _common_release new_version dry_run='false':
 # Usage: just release-patch [--dry-run]
 release-patch *args: _pre_flight_checks
     #!/usr/bin/env -S bash -euo pipefail
+    args="{{args}}"
     DRY_RUN=false
     if [[ "$args" == "--dry-run" ]]; then DRY_RUN=true; fi
     
@@ -182,6 +183,7 @@ release-patch *args: _pre_flight_checks
 # Usage: just release-minor [--dry-run]
 release-minor *args: _pre_flight_checks
     #!/usr/bin/env -S bash -euo pipefail
+    args="{{args}}"
     DRY_RUN=false
     if [[ "$args" == "--dry-run" ]]; then DRY_RUN=true; fi
 
@@ -195,6 +197,7 @@ release-minor *args: _pre_flight_checks
 # Usage: just release-major [--dry-run]
 release-major *args: _pre_flight_checks
     #!/usr/bin/env -S bash -euo pipefail
+    args="{{args}}"
     DRY_RUN=false
     if [[ "$args" == "--dry-run" ]]; then DRY_RUN=true; fi
 
@@ -208,6 +211,7 @@ release-major *args: _pre_flight_checks
 # Usage: just release-set 1.2.3 [--dry-run]
 release-set version *args: _pre_flight_checks
     #!/usr/bin/env -S bash -euo pipefail
+    args="{{args}}"
     DRY_RUN=false
     if [[ "$args" == "--dry-run" ]]; then DRY_RUN=true; fi
 

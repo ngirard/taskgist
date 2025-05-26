@@ -139,6 +139,11 @@ def main_cli():
         description="Generates a concise gist from a software engineering task description using BAML.",
         formatter_class=argparse.RawTextHelpFormatter,
     )
+
+    if '--version' in sys.argv:
+        print(f"{parser.prog} {__version__}")
+        return
+    
     parser.add_argument(
         "--version",
         action="version",
@@ -154,10 +159,6 @@ def main_cli():
     )
 
     args = parser.parse_args()
-
-    if args.version:
-        print(f"{parser.prog} {__version__}")
-        return
 
     if args.task is None:
         parser.error("the following arguments are required: task")

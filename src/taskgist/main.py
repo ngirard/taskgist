@@ -12,6 +12,7 @@ from baml_py.errors import BamlError
 from .baml_client.async_client import b as ab  # Using async client
 from .baml_client.types import KeywordPhrase
 from .baml_client.config import set_log_level
+from . import __version__
 
 # Load environment variables from .env file at the earliest opportunity
 load_dotenv()
@@ -124,8 +125,15 @@ def create_gist(keyword_phrase_obj: KeywordPhrase) -> str:
 def main_cli():
     """Command-line interface for taskgist."""
     parser = argparse.ArgumentParser(
+        prog="taskgist",
         description="Generates a concise gist from a software engineering task description using BAML.",
         formatter_class=argparse.RawTextHelpFormatter,
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
     parser.add_argument(
         "task",

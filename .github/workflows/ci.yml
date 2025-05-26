@@ -1,18 +1,100 @@
-name: ci
+name: Python CI for Taskgist
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
+
+# Restrict permissions for security: allow only reading contents.
+permissions:
+  contents: read
 
 jobs:
-  build:
+  build_and_test:
     runs-on: ubuntu-latest
+    # This project targets Python 3.12 as per pyproject.toml 'requires-python' and README.
+    # If matrix testing across multiple Python versions or OS were desired, it would be defined here.
+
+
+    # Define an environment variable at the job level to check for the secret's presence.
+    # This expression evaluates to the string 'true' or 'false'.
+    env:
+      HAS_GEMINI_KEY: ${{ secrets.GEMINI_API_KEY != '' && secrets.GEMINI_API_KEY != null }}
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Build the BAML client
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+        # To pin a specific version of just:
+        # with:
+        #   just-version: '1.25.0' # Example version
+
+      - name: Set up Python 3.12 and uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          # To pin a specific uv version (recommended for stability):
+          # version: "0.2.7" # Check for the latest stable uv version
+          python-version: "3.12" # Matches 'requires-python' in pyproject.toml and README
+          enable-cache: true # Enable uv's built-in caching mechanism
+          # Invalidate uv's cache if pyproject.toml changes, ensuring dependencies are re-evaluated.
+          cache-dependency-glob: "pyproject.toml"
+
+      # The project's justfile provides convenient targets.
+      # The default 'just' task runs: sync, baml-generate, and lint.
+      # - 'sync': Installs dependencies using 'uv sync'.
+      # - 'baml-generate': Generates the BAML Python client.
+      # - 'lint': Lints the Python code using Ruff.
+      - name: Run sync, BAML generation, and lint
+        run: just
+        # This is equivalent to running:
+        # $ just sync
+        # $ just baml-generate
+        # $ just lint
+
+      # Run BAML tests defined in *.baml files (e.g., src/taskgist/baml_src/keywords.baml).
+      # These tests might require an API key if they interact with a live LLM.
+      # The 'baml-test' just target depends on 'baml-generate' (which was run in the previous step).
+      - name: Run BAML tests
+        # Use the job-level environment variable for the condition.
+        # Compare against the string 'true'.
+        if: env.HAS_GEMINI_KEY == 'true'
+        env:
+          # Pass the actual secret value to the step's environment if the condition is met.
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: just baml-test
+      
+      - name: Inform if BAML tests were skipped
+        # Use the job-level environment variable for the condition.
+        # Compare against the string 'false'.
+        if: env.HAS_GEMINI_KEY == 'false'
         run: |
-          set -eux
-          (cd src/taskgist; npx @boundaryml/baml generate)
-          docker build -t taskgist .
+          echo "INFO: GEMINI_API_KEY secret not found or empty. Skipping BAML tests that may require it."
+
+      # Build the Python package (sdist and wheel).
+      # The 'just build' target runs 'uv build' and depends on 'sync' and 'baml-generate' (already run).
+      - name: Build package
+        run: just build
+
+      - name: Verify build artifacts
+        run: |
+          echo "Contents of dist/ directory:"
+          ls -lR dist/
+          if [ -z "$(ls -A dist/*.whl)" ]; then 
+            echo "Error: No wheel (.whl) file found in dist/ directory!"
+            exit 1
+          fi
+          if [ -z "$(ls -A dist/*.tar.gz)" ]; then
+            echo "Error: No sdist (.tar.gz) file found in dist/ directory!"
+            exit 1
+          fi
+          echo "Build artifacts verified successfully."
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-${{ runner.os }}-py${{ matrix.python-version || '3.12' }} # Descriptive artifact name
+          path: dist/
+          if-no-files-found: error # Fail the workflow if 'dist/' is empty or expected files are missing

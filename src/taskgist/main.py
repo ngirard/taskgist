@@ -94,34 +94,39 @@ async def run_extraction(task_description: str) -> KeywordPhrase | None:
 
 def _normalize_spaces(text: str) -> str:
     """Replace uncommon whitespace characters with regular spaces."""
-    for ch in ("\u00A0", "\u200B", "\u200C", "\u200D", "\uFEFF"):
+    for ch in ("\u00a0", "\u200b", "\u200c", "\u200d", "\ufeff"):
         text = text.replace(ch, " ")
     return text
 
 
 def create_gist(keyword_phrase_obj: KeywordPhrase) -> str:
     """Creates a hyphenated gist from the KeywordPhrase object."""
-    action_verb = _normalize_spaces(keyword_phrase_obj.actionVerb).strip().lower()
-    phrase_elements = [
-        _normalize_spaces(elem).strip().lower()
-        for elem in keyword_phrase_obj.phrase
+    # Ensure actionVerb is explicitly converted to a Python string before processing
+    action_verb_str = str(keyword_phrase_obj.actionVerb)
+    action_verb = _normalize_spaces(action_verb_str).strip().lower()
+
+    # Ensure each element from the phrase is explicitly converted to a Python string
+    # before processing, then store them as actual strings.
+    phrase_elements_as_strings = [
+        _normalize_spaces(str(elem_obj)).strip().lower()
+        for elem_obj in keyword_phrase_obj.phrase
     ]
 
     final_gist_parts = []
-    if action_verb:  # Only add if action_verb is not empty
+    if action_verb:
         final_gist_parts.extend(action_verb.split())
 
-    if phrase_elements:
+    if phrase_elements_as_strings:
+        relevant_phrase_elements = phrase_elements_as_strings  # Default assignment
         # Verification: if the first phrase element is the same as action_verb,
         # it means the model might have just repeated it from the explicit field.
         # The instruction is to ignore the first element of phrase in this case.
-        if phrase_elements[0] == action_verb:
-            relevant_phrase_elements = phrase_elements[1:]
-        else:
-            relevant_phrase_elements = phrase_elements
+        if phrase_elements_as_strings[0] == action_verb:
+            relevant_phrase_elements = phrase_elements_as_strings[1:]
+        # No else needed, relevant_phrase_elements is already phrase_elements_as_strings
 
         for elem in relevant_phrase_elements:
-            final_gist_parts.extend(elem.split())
+            final_gist_parts.extend(elem.split())  # This will use Python's str.split()
 
     # Remove duplicates while preserving order and filter out empty strings
     seen = set()
@@ -140,10 +145,10 @@ def main_cli():
         formatter_class=argparse.RawTextHelpFormatter,
     )
 
-    if '--version' in sys.argv:
+    if "--version" in sys.argv:
         print(f"{parser.prog} {__version__}")
         return
-    
+
     parser.add_argument(
         "--version",
         action="version",

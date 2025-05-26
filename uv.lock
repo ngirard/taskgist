@@ -119,7 +119,6 @@ wheels = [
 
 [[package]]
 name = "taskgist"
-version = "0.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "baml-py" },

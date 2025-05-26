@@ -14,5 +14,5 @@ jobs:
       - name: Build the BAML client
         run: |
           set -eux
-          npx @boundaryml/baml generate
+          (cd src/taskgist; npx @boundaryml/baml generate)
           docker build -t taskgist .

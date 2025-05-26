@@ -13,6 +13,7 @@ function ExtractKeywords(taskDescription: string) -> KeywordPhrase {
     - Omit articles (the, a, an), common prepositions (in, on, to, for), and pronouns (it, this, that, etc.).
     - Be representative of the core task.
     - Not exceed 5 words
+    - Each returned word must be a single token with no spaces
 
     {{ ctx.output_format }}
 

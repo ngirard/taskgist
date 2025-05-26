@@ -1,6 +1,6 @@
 [project]
 name = "taskgist"
-version = "0.1.2"
+dynamic = ["version"]
 description = "Generates a concise gist from a task description using BAML and OpenAI."
 readme = "README.md"
 requires-python = ">=3.12"

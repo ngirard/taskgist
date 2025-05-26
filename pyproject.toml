@@ -21,7 +21,7 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
-    "baml-py==0.88.0",
+    "baml-py==0.89",
     "pydantic>=2.11.5",
     "python-dotenv~=1.0.0",
 ]

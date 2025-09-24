@@ -21,8 +21,8 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
-    "baml-py==0.89",
-    "pydantic>=2.11.5",
+    "baml-py==0.208.3",
+    "pydantic>=2.11.9",
     "python-dotenv~=1.0.0",
 ]
 
@@ -38,5 +38,5 @@ path = "src/taskgist/__init__.py"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.11.11",
+    "ruff>=0.13.1",
 ]

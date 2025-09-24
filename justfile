@@ -1,3 +1,6 @@
+main_module := "taskgist"
+program_name := "taskgist"
+
 # Default task: sync dependencies, generate BAML client, and lint
 default: sync baml-generate lint
 
@@ -10,12 +13,12 @@ sync *args:
 baml-generate *args:
     #!/usr/bin/env -S bash -euo pipefail
     echo "Generating BAML client..."
-    (cd src/taskgist; uv run baml-cli generate {{args}})
+    (cd src/{{main_module}}; uv run baml-cli generate {{args}})
 
 # Run BAML tests
 baml-test *args: baml-generate
     #!/usr/bin/env -S bash -euo pipefail
-    (cd src/taskgist; uv run baml-cli test {{args}}) # baml-cli test usually discovers tests in baml_src/
+    (cd src/{{main_module}}; uv run baml-cli test {{args}}) # baml-cli test usually discovers tests in baml_src/
 
 # Lint the Python code with ruff
 lint *args:
@@ -32,10 +35,10 @@ build *args: sync baml-generate
     #!/usr/bin/env -S bash -euo pipefail
     uv build {{args}}
 
-# Run the taskgist CLI tool. Synopsis: just run "Create a new feature"
+# Run the project CLI tool. Synopsis: just run "Create a new feature"
 run *args:
     #!/usr/bin/env -S bash -euo pipefail
-    uv run taskgist -- "{{args}}"
+    uv run {{program_name}} -- "{{args}}"
 
 # Install the package in editable mode (uv sync usually handles this for projects)
 # This is mostly for explicit re-installation if needed.
@@ -52,8 +55,8 @@ clean:
     rm -rf .pytest_cache/
     rm -rf .ruff_cache/
     rm -rf .mypy_cache/
-    rm -rf src/taskgist/__pycache__/
-    rm -rf src/taskgist/baml_client/ # Remove generated BAML client
+    rm -rf src/{{main_module}}/__pycache__/
+    rm -rf src/{{main_module}}/baml_client/ # Remove generated BAML client
     # Be careful with .venv if you have specific configurations in it.
     # For a full clean that requires re-syncing:
     # rm -rf .venv/
@@ -86,7 +89,7 @@ snapshot:
         dir2prompt > "${snapshot_filename}"
     else
         echo "dir2prompt command not found. Using tree instead for snapshot."
-        tree -L 3 -a -I '.git|.venv|__pycache__|.ruff_cache|dist|*.egg-info|src/taskgist/baml_client' > "${snapshot_filename}"
+        tree -L 3 -a -I '.git|.venv|__pycache__|.ruff_cache|dist|*.egg-info|src/{{main_module}}/baml_client' > "${snapshot_filename}"
     fi
     wc -c "${snapshot_filename}"
 
@@ -117,7 +120,7 @@ _common_release new_version dry_run='false':
     set -e # Exit on any error
     new_version="{{new_version}}"
     dry_run="{{dry_run}}"
-    CURRENT_VERSION_FROM_FILE=$(python scripts/bump_version.py current) # Get actual current from file before any changes
+    CURRENT_VERSION_FROM_FILE=$(python3 scripts/bump_version.py current) # Get actual current from file before any changes
     echo "Current version in file: $CURRENT_VERSION_FROM_FILE"
     echo "Target version for this release: $new_version"
 
@@ -125,11 +128,11 @@ _common_release new_version dry_run='false':
         echo ""
         echo "--- DRY RUN MODE ---"
         if [[ "$new_version" != "$CURRENT_VERSION_FROM_FILE" ]]; then
-            echo "Would update 'src/taskgist/__init__.py' from $CURRENT_VERSION_FROM_FILE to $new_version."
+            echo "Would update 'src/{{main_module}}/__init__.py' from $CURRENT_VERSION_FROM_FILE to $new_version."
         else
-            echo "Version in 'src/taskgist/__init__.py' would remain $new_version (already set or no change needed)."
+            echo "Version in 'src/{{main_module}}/__init__.py' would remain $new_version (already set or no change needed)."
         fi
-        echo "Would commit 'src/taskgist/__init__.py' with message 'Bump version to v$new_version'."
+        echo "Would commit 'src/{{main_module}}/__init__.py' with message 'Bump version to v$new_version'."
         echo "Would create annotated tag 'v$new_version' with message 'Version v$new_version'."
         current_branch_for_dry_run=$(git rev-parse --abbrev-ref HEAD)
         echo "Would push '$current_branch_for_dry_run' branch and tag 'v$new_version' to origin."
@@ -140,16 +143,16 @@ _common_release new_version dry_run='false':
     # Actual operations
     # The Python script (called by release-patch/minor/major/set) has already updated the version file.
     # We verify the file content here.
-    VERSION_IN_FILE_AFTER_SCRIPT=$(python scripts/bump_version.py current)
+    VERSION_IN_FILE_AFTER_SCRIPT=$(python3 scripts/bump_version.py current)
     if [[ "$VERSION_IN_FILE_AFTER_SCRIPT" != "$new_version" ]]; then
         echo "Error: Version in file ($VERSION_IN_FILE_AFTER_SCRIPT) does not match target version ($new_version) after script execution." >&2
         echo "This might indicate an issue with scripts/bump_version.py or the release process." >&2
         exit 1
     fi
-    echo "Version in 'src/taskgist/__init__.py' confirmed as $new_version."
+    echo "Version in 'src/{{main_module}}/__init__.py' confirmed as $new_version."
     
     echo "Committing version update..."
-    git add src/taskgist/__init__.py
+    git add src/{{main_module}}/__init__.py
     git commit -m "Bump version to v$new_version"
 
     echo "Creating annotated tag v$new_version..."
@@ -175,7 +178,7 @@ release-patch *args: _pre_flight_checks
     
     echo "Determining new patch version..."
     # Python script updates file if not dry_run, and prints new version to stdout as its last line.
-    NEW_VERSION_OUTPUT=$(python scripts/bump_version.py bump patch)
+    NEW_VERSION_OUTPUT=$(python3 scripts/bump_version.py bump patch)
     NEW_VERSION=$(echo "$NEW_VERSION_OUTPUT" | tail -n1) # Capture the last line (the version)
 
     just _common_release "$NEW_VERSION" "$DRY_RUN"
@@ -189,7 +192,7 @@ release-minor *args: _pre_flight_checks
     if [[ "$args" == "--dry-run" ]]; then DRY_RUN=true; fi
 
     echo "Determining new minor version..."
-    NEW_VERSION_OUTPUT=$(python scripts/bump_version.py bump minor)
+    NEW_VERSION_OUTPUT=$(python3 scripts/bump_version.py bump minor)
     NEW_VERSION=$(echo "$NEW_VERSION_OUTPUT" | tail -n1)
 
     just _common_release "$NEW_VERSION" "$DRY_RUN"
@@ -203,7 +206,7 @@ release-major *args: _pre_flight_checks
     if [[ "$args" == "--dry-run" ]]; then DRY_RUN=true; fi
 
     echo "Determining new major version..."
-    NEW_VERSION_OUTPUT=$(python scripts/bump_version.py bump major)
+    NEW_VERSION_OUTPUT=$(python3 scripts/bump_version.py bump major)
     NEW_VERSION=$(echo "$NEW_VERSION_OUTPUT" | tail -n1)
 
     just _common_release "$NEW_VERSION" "$DRY_RUN"
@@ -221,7 +224,7 @@ release-set version *args: _pre_flight_checks
     fi
     
     echo "Setting version to {{version}}..."
-    NEW_VERSION_OUTPUT=$(python scripts/bump_version.py set "{{version}}")
+    NEW_VERSION_OUTPUT=$(python3 scripts/bump_version.py set "{{version}}")
     NEW_VERSION=$(echo "$NEW_VERSION_OUTPUT" | tail -n1)
 
     just _common_release "$NEW_VERSION" "$DRY_RUN"
